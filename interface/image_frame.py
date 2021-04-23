@@ -4,7 +4,7 @@ import numpy as np
 from PyQt5.QtCore import Qt, QSize, pyqtSlot
 import sys
 import os
-from PyQt5.QtWidgets import QDesktopWidget, QGraphicsPixmapItem, QGraphicsScene
+from PyQt5.QtWidgets import QDesktopWidget, QGraphicsPixmapItem, QGraphicsScene, QMessageBox
 
 file_path = os.path.dirname(os.path.dirname(os.path.abspath("__file__")))  # 根路径
 sys.path.append(file_path)
@@ -22,27 +22,30 @@ class Ui_Form_img(object):
         self.picshow.setStyleSheet("border:2px solid red;")
 
     def set_img(self, img_path):
-        self.image = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), cv2.IMREAD_COLOR)
-        self.image = QtGui.QImage(self.image.data, self.image.shape[1], self.image.shape[0], self.image.shape[1] * 3,
-                                  QtGui.QImage.Format_RGB888).rgbSwapped()
-        pix = QtGui.QPixmap.fromImage(self.image)
-        self.item = QGraphicsPixmapItem(pix)  # 创建像素图元
-        self.scene = QGraphicsScene()  # 创建场景
-        self.scene.addItem(self.item)
-        self.picshow.setScene(self.scene)  # 将场景添加至视图
-        self.zoomscale = 1  # 图片放缩尺度
-
-        self.picshow.get_img_xx(self)  # 把数据打到QGraphicsView_r里
+        try:
+            self.image = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), cv2.IMREAD_COLOR)
+            self.image = QtGui.QImage(self.image.data, self.image.shape[1], self.image.shape[0], self.image.shape[1] * 3,
+                                      QtGui.QImage.Format_RGB888).rgbSwapped()
+            pix = QtGui.QPixmap.fromImage(self.image)
+            self.item = QGraphicsPixmapItem(pix)  # 创建像素图元
+            self.scene = QGraphicsScene()  # 创建场景
+            self.scene.addItem(self.item)
+            self.picshow.setScene(self.scene)  # 将场景添加至视图
+            self.zoomscale = 1  # 图片放缩尺度
+            self.picshow.get_img_xx(self)  # 把数据打到QGraphicsView_r里
+        except:
+            msg_box = QMessageBox(QMessageBox.Warning, '警告', '该位置没有图像请检查！！')
+            msg_box.exec_()
 
     @pyqtSlot()
     def img_up(self):
         """
-        点击方法图像
+        点击放大图像
         """
         # TODO: not implemented yet
         self.zoomscale = self.zoomscale + 0.05
-        if self.zoomscale >= 1.2:
-            self.zoomscale = 1.2
+        if self.zoomscale >= 3:
+            self.zoomscale = 3
         self.item.setScale(self.zoomscale)  # 放大图像
 
     @pyqtSlot()
@@ -52,8 +55,8 @@ class Ui_Form_img(object):
         """
         # TODO: not implemented yet
         self.zoomscale = self.zoomscale - 0.05
-        if self.zoomscale <= 0:
-            self.zoomscale = 0.2
+        if self.zoomscale <= 0.1:
+            self.zoomscale = 0.1
         self.item.setScale(self.zoomscale)  # 缩小图像
 
 

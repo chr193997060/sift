@@ -20,13 +20,8 @@ class File_list_Ui(object):
         # 获取屏幕坐标系
         self.screen = QDesktopWidget().screenGeometry()
 
-
     def setupUi(self, Form):
-
-
         print(self.file_path)
-
-
         self.filelist_frame = QtWidgets.QTreeView(Form)
         self.filelist_frame.setGeometry(QtCore.QRect(0, 0, int(self.screen.width() * 0.2 - 60),
                                                      int(self.screen.height() * 0.7) + 20))
@@ -40,7 +35,7 @@ class File_list_Ui(object):
         if d_t2[-1] in img_type:
             if d_filepath == self.xx.operatFrom.img:
                 return
-            print(d_filepath)
+            print("d_filepath in ", d_filepath)
             self.xx.showimage(d_filepath)
             self.xx.operatFrom.img = d_filepath
             self.xx.operatFrom.sift_img = None
@@ -55,7 +50,6 @@ class File_list_Ui(object):
         for col in range(1, 4):
             self.filelist_frame.setColumnHidden(col, True)
         self.filelist_frame.doubleClicked.connect(self.doubleck)
-
 
 
 if __name__ == '__main__':
